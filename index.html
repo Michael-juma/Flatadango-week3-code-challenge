@@ -1,28 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flatadango</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Listings with Buy Ticket</title>
+  <style>
+    .film-card {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .film-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    .film-card h3 {
+      margin-top: 15px;
+      font-size: 1.5em;
+    }
+    .film-card p {
+      font-size: 1em;
+      margin: 10px 0;
+    }
+    .film-card .showtime {
+      font-weight: bold;
+    }
+    .film-card .tickets-sold {
+      margin-top: 10px;
+      color: green;
+    }
+    .film-card button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .film-card button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
-    <h1>Flatadango</h1>
-    <div id="main">
-        <aside id="menu">
-            <ul id="films"></ul>
-        </aside>
-        <section id="movie-details">
-            <h2 id="movie-title">Movie Title</h2>
-            <img id="movie-poster" src="" alt="Movie Poster">
-            <p id="movie-description"></p>
-            <p><strong>Runtime:</strong> <span id="movie-runtime"></span> minutes</p>
-            <p><strong>Showtime:</strong> <span id="movie-showtime"></span></p>
-            <p><strong>Available Tickets:</strong> <span id="available-tickets"></span></p>
-            <button id="buy-ticket-btn">Buy Ticket</button>
-        </section>
-    </div>
 
-    <script src="app.js"></script>
+  <h1>Film Listings</h1>
+  <div id="film-list"></div>
+
+  <script>
+    const films = [
+      {
+        id: 1,
+        title: "The Giant Gila Monster",
+        runtime: 108,
+        capacity: 30,
+        showtime: "04:00PM",
+        tickets_sold: 27,
+        description: "A giant lizard terrorizes a rural Texas community and a heroic teenager attempts to destroy the creature.",
+        poster: "https://www.gstatic.com/tv/thumb/v22vodart/2157/p2157_v_v8_ab.jpg"
+      },
+      {
+        id: 2,
+        title: "Manos: The Hands Of Fate",
+        runtime: 118,
+        capacity: 50,
+        showtime: "06:45PM",
+        tickets_sold: 44,
+        description: "A family gets lost on the road and stumbles upon a hidden, underground, devil-worshiping cult led by the fearsome Master and his servant Torgo.",
+        poster: "https://www.gstatic.com/tv/thumb/v22vodart/47781/p47781_v_v8_ac.jpg"
+      },
+      {
+        id: 3,
+        title: "Plan 9 from Outer Space",
+        runtime: 79,
+        capacity: 100,
+        showtime: "07:30PM",
+        tickets_sold: 90,
+        description: "Aliens try to stop humans from creating a doomsday weapon that could destroy the galaxy, but their plan leads to an army of the undead.",
+        poster: "https://upload.wikimedia.org/wikipedia/en/3/34/Plan9fromouterspace_poster.jpg"
+      }
+    ];
+
+    
+    function displayFilms() {
+      const filmListContainer = document.getElementById('film-list');
+      filmListContainer.innerHTML = ''; 
+
+      films.forEach(film => {
+        const filmCard = document.createElement('div');
+        filmCard.classList.add('film-card');
+
+        
+        const posterImg = document.createElement('img');
+        posterImg.src = film.poster;
+        posterImg.alt = `${film.title} poster`;
+        filmCard.appendChild(posterImg);
+
+        
+        const title = document.createElement('h3');
+        title.textContent = film.title;
+        filmCard.appendChild(title);
+
+        
+        const description = document.createElement('p');
+        description.textContent = film.description;
+        filmCard.appendChild(description);
+
+        
+        const showtime = document.createElement('p');
+        showtime.classList.add('showtime');
+        showtime.textContent = `Showtime: ${film.showtime}`;
+        filmCard.appendChild(showtime);
+
+        
+        const ticketsSold = document.createElement('p');
+        ticketsSold.classList.add('tickets-sold');
+        ticketsSold.textContent = `Tickets Sold: ${film.tickets_sold}`;
+        filmCard.appendChild(ticketsSold);
+
+        
+        const buyButton = document.createElement('button');
+        buyButton.textContent = "Buy Ticket";
+        buyButton.onclick = function() {
+          buyTicket(film);
+        };
+        filmCard.appendChild(buyButton);
+
+        
+        filmListContainer.appendChild(filmCard);
+      });
+    }
+
+    
+    function buyTicket(film) {
+      if (film.tickets_sold < film.capacity) {
+        film.tickets_sold += 1; 
+        displayFilms(); 
+      } else {
+        alert(`Sorry, the movie "${film.title}" is sold out!`);
+      }
+    }
+
+    
+    displayFilms();
+  </script>
+
 </body>
 </html>

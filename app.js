@@ -1,78 +1,77 @@
-
-const filmMenu = document.getElementById('films');
-const movieTitle = document.getElementById('movie-title');
-const moviePoster = document.getElementById('movie-poster');
-const movieDescription = document.getElementById('movie-description');
-const movieRuntime = document.getElementById('movie-runtime');
-const movieShowtime = document.getElementById('movie-showtime');
-const availableTickets = document.getElementById('available-tickets');
-const buyTicketBtn = document.getElementById('buy-ticket-btn');
-
-const apiUrl = 'http://localhost:3000/films';  // Replace with your actual API URL
-
-// Fetch all films
-function fetchFilms() {
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(films => {
-            films.forEach(film => {
-                const filmItem = document.createElement('li');
-                filmItem.textContent = film.title;
-                filmItem.classList.add('film-item');
-                filmItem.addEventListener('click', () => showFilmDetails(film.id));
-                filmMenu.appendChild(filmItem);
-            });
-        })
-        .catch(error => console.error('Error fetching films:', error));
-}
-
-// Show details for a selected film
-function showFilmDetails(filmId) {
-    fetch(`${apiUrl}/${filmId}`)
-        .then(response => response.json())
-        .then(film => {
-            movieTitle.textContent = film.title;
-            moviePoster.src = film.poster;
-            movieDescription.textContent = film.description;
-            movieRuntime.textContent = film.runtime;
-            movieShowtime.textContent = film.showtime;
-            availableTickets.textContent = film.capacity - film.tickets_sold;
-
-            // Handle the "Buy Ticket" button behavior
-            buyTicketBtn.disabled = film.tickets_sold >= film.capacity;
-            buyTicketBtn.textContent = film.tickets_sold >= film.capacity ? 'Sold Out' : 'Buy Ticket';
-            
-            // Track available tickets for buying
-            buyTicketBtn.onclick = () => buyTicket(filmId, film.tickets_sold, film.capacity);
-        })
-        .catch(error => console.error('Error fetching film details:', error));
-}
-
-// Buy ticket for a movie
-function buyTicket(filmId, ticketsSold, capacity) {
-    if (ticketsSold < capacity) {
-        const updatedTicketsSold = ticketsSold + 1;
-
-        // Update ticket count on the server
-        fetch(`${apiUrl}/${filmId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tickets_sold: updatedTicketsSold })
-        })
-        .then(response => response.json())
-        .then(film => {
-            // Update the available tickets displayed on the page
-            availableTickets.textContent = film.capacity - film.tickets_sold;
-            buyTicketBtn.disabled = film.tickets_sold >= film.capacity;
-            buyTicketBtn.textContent = film.tickets_sold >= film.capacity ? 'Sold Out' : 'Buy Ticket';
-        })
-        .catch(error => console.error('Error buying ticket:', error));
+const films = [
+    {
+      id: 1,
+      title: "The Giant Gila Monster",
+      runtime: 108,
+      capacity: 30,
+      showtime: "04:00PM",
+      tickets_sold: 27,
+      description: "A giant lizard terrorizes a rural Texas community and a heroic teenager attempts to destroy the creature.",
+      poster: "https://www.gstatic.com/tv/thumb/v22vodart/2157/p2157_v_v8_ab.jpg"
+    },
+    {
+      id: 2,
+      title: "Manos: The Hands Of Fate",
+      runtime: 118,
+      capacity: 50,
+      showtime: "06:45PM",
+      tickets_sold: 44,
+      description: "A family gets lost on the road and stumbles upon a hidden, underground, devil-worshiping cult led by the fearsome Master and his servant Torgo.",
+      poster: "https://www.gstatic.com/tv/thumb/v22vodart/47781/p47781_v_v8_ac.jpg"
+    },
+    {
+      id: 3,
+      title: "Plan 9 from Outer Space",
+      runtime: 79,
+      capacity: 100,
+      showtime: "07:30PM",
+      tickets_sold: 90,
+      description: "Aliens try to stop humans from creating a doomsday weapon that could destroy the galaxy, but their plan leads to an army of the undead.",
+      poster: "https://upload.wikimedia.org/wikipedia/en/3/34/Plan9fromouterspace_poster.jpg"
     }
-}
+  ];
 
-// Initialize the app
-function init() {
-    fetchFilms();
-}
+  
+  function displayFilms() {
+    const filmListContainer = document.getElementById('film-list');
+    filmListContainer.innerHTML = ''; 
 
-init();
+    films.forEach(film => {
+      
+      const filmCard = document.createElement('div');
+      filmCard.classList.add('film-card');
+
+      const posterImg = document.createElement('img');
+      posterImg.src = film.poster;
+      posterImg.alt = `${film.title} poster`;
+      filmCard.appendChild(posterImg);
+
+      
+      const title = document.createElement('h3');
+      title.textContent = film.title;
+      filmCard.appendChild(title);
+
+      
+      const description = document.createElement('p');
+      description.textContent = film.description;
+      filmCard.appendChild(description);
+
+      
+      const showtime = document.createElement('p');
+      showtime.classList.add('showtime');
+      showtime.textContent = `Showtime: ${film.showtime}`;
+      filmCard.appendChild(showtime);
+
+
+      const ticketsSold = document.createElement('p');
+      ticketsSold.classList.add('tickets-sold');
+      ticketsSold.textContent = `Tickets Sold: ${film.tickets_sold}`;
+      filmCard.appendChild(ticketsSold);
+
+    
+      filmListContainer.appendChild(filmCard);
+    });
+  }
+
+  
+  displayFilms();
